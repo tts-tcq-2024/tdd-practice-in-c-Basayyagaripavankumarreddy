@@ -61,45 +61,55 @@ void AddCustomDelimiters(const char* delimiterSection, char delimiters[MAX_DELIM
     }
 }
 
-// Function to split the numbers based on delimiters
+// Helper function to check for delimiter in the token
+const char* GetDelimiter(char* token, char delimiters[MAX_DELIMITERS][MAX_DELIMITER_LENGTH], int delimiterCount) {
+    for (int i = 0; i < delimiterCount; i++) {
+        if (strpbrk(token, delimiters[i])) {
+            return delimiters[i];
+        }
+    }
+    return NULL;
+}
+
+// Function to split numbers based on delimiters
 int SplitNumbers(const char* numbers, char delimiters[MAX_DELIMITERS][MAX_DELIMITER_LENGTH], int delimiterCount, int numArray[MAX_NUMBERS]) {
     char numString[1000];
     strcpy(numString, numbers);
-    
+
     char* token;
     int count = 0;
     char* rest = numString;
+    const char* delim;
 
     while ((token = strtok_r(rest, delimiters[0], &rest))) {
-        for (int i = 1; i < delimiterCount; i++) {
-            if (strpbrk(token, delimiters[i])) {
-                token = strtok(token, delimiters[i]);
-            }
+        while ((delim = GetDelimiter(token, delimiters, delimiterCount))) {
+            token = strtok(token, delim);
         }
         numArray[count++] = atoi(token);
     }
     return count;
 }
 
+
 // Function to validate numbers (checking for negatives)
-void ValidateNumbers(int numArray[MAX_NUMBERS], int count) {
-    int hasNegatives = 0;
-    char negativeNumbers[100] = { 0 };
+int ValidateNumbers(int numArray[MAX_NUMBERS], int count, char* negativeNumbers) {
+    int negativeCount = 0;
+    char numStr[10];
 
     for (int i = 0; i < count; i++) {
         if (numArray[i] < 0) {
-            char numStr[10];
             sprintf(numStr, "%d,", numArray[i]);
             strcat(negativeNumbers, numStr);
-            hasNegatives = 1;
+            negativeCount++;
         }
     }
 
-    if (hasNegatives) {
+    if (negativeCount > 0) {
         negativeNumbers[strlen(negativeNumbers) - 1] = '\0'; // Remove trailing comma
-        printf("negatives not allowed: %s\n", negativeNumbers);
-        exit(EXIT_FAILURE); // Exit if negative numbers are found
+        return 1; // Indicates there are negative numbers
     }
+
+    return 0; // No negatives found
 }
 
 // Function to sum the numbers, ignoring those greater than 1000
