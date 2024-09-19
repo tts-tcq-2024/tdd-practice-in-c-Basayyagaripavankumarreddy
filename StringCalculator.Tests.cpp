@@ -1,112 +1,171 @@
 #include <gtest/gtest.h>
-#include "StringCalculator.h"  // Include your StringCalculator.h that defines Add() and related functions
+#include "StringCalculator.h"
 
-// Test for empty input
-TEST(StringCalculatorTests, ExpectZeroForEmptyInput) {
-    int expected = 0;
-    int result = Add("");
-    ASSERT_EQ(result, expected);
+TEST(StringCalculatorAddTests, ExpectZeroForEmptyInput) {
+    int expectedresult = 0;
+    std::string input = "";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
 }
 
-// Test for single number
-TEST(StringCalculatorTests, ExpectSingleNumber) {
-    int expected = 5;
-    int result = Add("5");
-    ASSERT_EQ(result, expected);
+TEST(StringCalculatorAddTests, ExpectZeroForSingleZero) {
+    int expectedresult = 0;
+    std::string input = "0";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
 }
 
-// Test for two numbers
-TEST(StringCalculatorTests, ExpectSumForTwoNumbers) {
-    int expected = 3;
-    int result = Add("1,2");
-    ASSERT_EQ(result, expected);
+TEST(StringCalculatorAddTests, ExpectSumForTwoNumbers) {
+    int expectedresult = 3;
+    std::string input = "1,2";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
 }
 
-// Test for handling newlines as delimiters
-TEST(StringCalculatorTests, ExpectSumWithNewlineDelimiter) {
-    int expected = 6;
-    int result = Add("1\n2,3");
-    ASSERT_EQ(result, expected);
+TEST(StringCalculatorAddTests, ExpectExceptionForNegativeNumbers) {
+    ASSERT_THROW({
+        std::string input = "-1,2";
+        StringCalculator objUnderTest;
+       objUnderTest.add(input);
+        }, std::runtime_error);
 }
 
-// Test for ignoring numbers greater than 1000
-TEST(StringCalculatorTests, IgnoreNumbersGreaterThan1000) {
-    int expected = 2;
-    int result = Add("2,1001");
-    ASSERT_EQ(result, expected);
+TEST(StringCalculatorAddTests, ExpectExceptionForNegativeNumbers2) {
+    ASSERT_THROW({
+        std::string input = "1,-2,-3";
+        StringCalculator objUnderTest;
+       objUnderTest.add(input);
+        }, std::runtime_error);
 }
 
-// Test for custom single character delimiter
-TEST(StringCalculatorTests, ExpectSumWithCustomSingleCharacterDelimiter) {
-    int expected = 6;
-    int result = Add("//;\n1;2;3");
-    ASSERT_EQ(result, expected);
+TEST(StringCalculatorAddTests, ExpectExceptionForNegativeNumbers3) {
+    ASSERT_THROW({
+        std::string input = "1,-2";
+        StringCalculator objUnderTest;
+       objUnderTest.add(input);
+        }, std::runtime_error);
 }
 
-// Test for custom multi-character delimiter
-TEST(StringCalculatorTests, ExpectSumWithCustomMultiCharacterDelimiter) {
-    int expected = 6;
-    int result = Add("//[***]\n1***2***3");
-    ASSERT_EQ(result, expected);
+TEST(StringCalculatorAddTests, ExpectSumWithNewlineDelimiter) {
+    int expectedresult = 6;
+    std::string input = "1\n2,3";
+     StringCalculator objUnderTest;
+    int result =objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
 }
 
-// Test for multiple custom delimiters
-TEST(StringCalculatorTests, ExpectSumWithMultipleCustomDelimiters) {
-    int expected = 10;
-    int result = Add("//[;][%]\n1;2%3;4");
-    ASSERT_EQ(result, expected);
+TEST(StringCalculatorAddTests, IgnoreNumbersGreaterThan1000) {
+    int expectedresult = 1;
+    std::string input = "1,1001";
+    StringCalculator objUnderTest;
+    int result =objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
 }
 
-// Test for negative numbers throwing exception
-TEST(StringCalculatorTests, ExpectExceptionForNegativeNumbers) {
-    char negativeNumbers[100] = {0};
-    int numArray[MAX_NUMBERS] = {-1, 2, -3};
-    int count = 3;
+TEST(StringCalculatorAddTests, IgnoreNumbersGreaterThan10002) {
+    int expectedresult = 2;
+    std::string input = "2,1001";
+    StringCalculator objUnderTest;
+    int result =objUnderTest.add(input);
 
-    int isNegative = ValidateNumbers(numArray, count, negativeNumbers);
-    ASSERT_EQ(isNegative, 1);
-    ASSERT_STREQ(negativeNumbers, "-1,-3");
+    ASSERT_EQ(result, expectedresult);
 }
 
-// Test to ensure no exception for valid numbers
-TEST(StringCalculatorTests, ValidatePositiveNumbers) {
-    char negativeNumbers[100] = {0};
-    int numArray[MAX_NUMBERS] = {1, 2, 3};
-    int count = 3;
+TEST(StringCalculatorAddTests, ExpectSumWithCustomDelimiter) {
+    int expectedresult = 3;
+    std::string input = "//;\n1;2";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
 
-    int isNegative = ValidateNumbers(numArray, count, negativeNumbers);
-    ASSERT_EQ(isNegative, 0);
+    ASSERT_EQ(result, expectedresult);
 }
 
-// Test for sum of valid numbers
-TEST(StringCalculatorTests, SumValidNumbers) {
-    int numArray[MAX_NUMBERS] = {1, 2, 3, 1001};
-    int count = 4;
+TEST(StringCalculatorAddTests, ExpectSumWithCustomDelimiter2) {
+    int expectedresult = 6;
+    std::string input = "//[***]\n1***2***3";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
 
-    int sum = SumNumbers(numArray, count);
-    ASSERT_EQ(sum, 6);  // Numbers greater than 1000 should be ignored
+    ASSERT_EQ(result, expectedresult);
 }
 
-// Test for no input case
-TEST(StringCalculatorTests, NoInputCase) {
-    int expected = 0;
-    int result = Add(NULL);
-    ASSERT_EQ(result, expected);
+TEST(StringCalculatorAddTests, ExpectSumWithCustomDelimiter3) {
+    int expectedresult = 6;
+    std::string input = "1\n2\n3";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
 }
 
-// Test for extracting custom delimiter
-TEST(StringCalculatorTests, ExtractCustomDelimiterTest) {
-    char delimiters[MAX_DELIMITERS][MAX_DELIMITER_LENGTH] = {",", "\n"};
-    int delimiterCount = 2;
-    char* numberString = ExtractCustomDelimiter("//[***]\n1***2***3", delimiters, &delimiterCount);
-    
-    ASSERT_STREQ(numberString, "1***2***3");
-    ASSERT_STREQ(delimiters[delimiterCount - 1], "***");
-    ASSERT_EQ(delimiterCount, 3);  // Default 2 + 1 custom delimiter
+TEST(StringCalculatorAddTests, ExpectSumWithCustomDelimiter4) {
+    int expectedresult = 6;
+    std::string input = "1\n2,3";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
 }
 
-// Main function to run tests
-int main(int argc, char **argv) {
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+TEST(StringCalculatorAddTests, ExpectSumWithCustomDelimiter5) {
+    int expectedresult = 1;
+    std::string input = "//[*][%]\n1*2%3";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
+}
+
+TEST(StringCalculatorAddTests, ExpectSumWithCustomDelimiter6) {
+    int expectedresult = 1;
+    std::string input = "1]2[3";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
+}
+
+TEST(StringCalculatorAddTests, ExpectSumWithCustomDelimiter7) {
+    int expectedresult = 1;
+    std::string input = "//[***][%%%]\n1***2%%%3";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
+}
+
+TEST(StringCalculatorAddTests, ExpectSumWithCustomDelimiter8) {
+    int expectedresult = 2;
+    std::string input = "//;\n2;1001";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
+}
+
+
+TEST(StringCalculatorAddTests, ExpectSumForoneNumber1) {
+    int expectedresult = 1;
+    std::string input = "1";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
+}
+
+TEST(StringCalculatorAddTests, ExpectSumForfiveNumber1) {
+    int expectedresult = 15;
+    std::string input = "1,2,3,4,5";
+    StringCalculator objUnderTest;
+    int result = objUnderTest.add(input);
+
+    ASSERT_EQ(result, expectedresult);
 }
